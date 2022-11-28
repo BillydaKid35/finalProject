@@ -45,7 +45,7 @@ def draw_text(text, size, color, x, y):
         text_rect.midtop = (x, y)
         screen.blit(text_surface, text_rect)
 
-# sprites...
+##########################_SPRITES_###############################
 class Player(Sprite):
     def __init__(self):
         Sprite.__init__(self)
@@ -62,6 +62,7 @@ class Player(Sprite):
             self.acc.x = -5 #negative 5 speed because of coordinate on graph
         if keys[pg.K_d]: #when d is pressed, player moves right
             self.acc.x = 5 #player moves positivly into the coordiant
+
     def update(self):
         self.acc = vec(0,0)
         self.controls()
@@ -73,7 +74,63 @@ class Player(Sprite):
         self.pos += self.vel + 0.5 * self.acc
         # self.rect.x += self.xvel
         # self.rect.y += self.yvel
-        self.rect.midbottom = self.pos    
+        self.rect.midbottom = self.pos  
+
+    def inbounds(self):
+        if self.pos.x < 0:
+            self.pos.x = 0
+        if self.pos.x > WIDTH:
+            self.pos.x = WIDTH  
+
+# bullet sprite
+class Pewpew(Sprite):
+    def __init__(self, x, y, w, h,sx,sy, owner):
+        Sprite.__init__(self)
+        self.owner = owner
+        self.image = pg.Surface((w, h))
+        self.image.set_colorkey(BLACK)
+        self.rect = self.image.get_rect()
+        if self.owner == 'player':
+            self.radius = w/2
+            pg.draw.circle(self.image, YELLOW, self.rect.center, self.radius)
+        else:
+            self.image.fill(RED)
+        self.rect.x = x
+        self.rect.y = y
+        self.speed_x = sx
+        self.speed_y = sy
+        self.fired = False
+    
+    def update(self):
+        if self.owner == "player":
+            self.rect.x += self.speed_x
+            self.rect.y += self.speed_y
+            # print(pewpews)
+        else:
+            self.rect.y += self.speed_y
+        if (self.rect.y < 0 or self.rect.y > HEIGHT):
+            self.kill()
+            # print(pewpews)
+
+def fire(self):
+        self.cd.event_time = floor(pg.time.get_ticks()/1000)
+        mpos = pg.mouse.get_pos()
+        targetx = mpos[0]
+        targety = mpos[1]
+        distance_x = targetx - self.rect.x
+        distance_y = targety - self.rect.y
+        angle = atan2(distance_y, distance_x)
+        speed_x = 10 * cos(angle)
+        speed_y = 10 * sin(angle)
+        # print(speed_x)
+        if self.cd.delta > 2:
+            p = Pewpew(self.pos.x,self.pos.y - self.rect.height, 30, 30, speed_x, speed_y, "player")
+        else:
+            p = Pewpew(self.pos.x,self.pos.y - self.rect.height, 10, 10, speed_x, speed_y, "player")
+
+        all_sprites.add(p)
+        Pewpew.add(p)
+
 
 # here's the mobs
 class Mob(Sprite):
@@ -131,6 +188,25 @@ class Mob(Sprite):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
 
+class Particle(Sprite):
+    def __init__(self, x, y, w, h):
+        Sprite.__init__(self)
+        self.image = pg.Surface((w, h))
+        self.image.fill(ORANGE)
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speedx = randint(2,20)*choice([-1,1])
+        self.speedy = randint(2,20)*choice([-1,1])
+        self.cd.event_time = floor(pg.time.get_ticks()/1000)
+        print('created a particle')
+    def update(self):
+        self.cd.ticking()
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy+PLAYER_GRAV
+        if self.cd.delta > 1:
+            print('time to die...')
+            self.kill()
 
 # init pygame and create a window
 pg.init()
@@ -151,13 +227,21 @@ player = Player()
 # add instances to groups
 all_sprites.add(player)
 
-
 for i in range(8):
     # instantiate mob class repeatedly
     m = Mob(randint(0, WIDTH), randint(0,HEIGHT), 25, 25, (randint(0,255), randint(0,255) , randint(0,255))) #width and height of mob
     all_sprites.add(m)
     mobs.add(m)
 print(mobs)
+
+# create groups
+all_sprites = pg.sprite.Group()
+all_plats = pg.sprite.Group()
+mobs = pg.sprite.Group()
+pewpews = pg.sprite.Group()
+enemyPewpews = pg.sprite.Group()
+particles = pg.sprite.Group()
+powerups = pg.sprite.Group()
 
 ############################ Game loop #################################
 running = True
