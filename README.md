@@ -1,4 +1,3 @@
-# finalProject
 #content from kids can code: http://kidscancode.org/blog/
 # import libraries and modules
 # from platform import platform
@@ -17,7 +16,6 @@ from math import *
 from time import *
 
 vec = pg.math.Vector2
-#blah blah blah
 # game settings, defines the width and the height of the game window
 WIDTH = 500
 HEIGHT = 600
@@ -27,7 +25,6 @@ FPS = 30
 PLAYER_FRIC = -0.2
 PLAYER_GRAV = .98
 POINTS = 0
-
 
 # define colors for the game
 WHITE = (255, 255, 255)
@@ -202,3 +199,4 @@ while running:
 
     # buffer - after drawing everything, flip display
     pg.display.flip()
+
