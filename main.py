@@ -23,9 +23,8 @@ HEIGHT = 600
 FPS = 30
 
 #background image
-background = "C:\Users\W.Johnstone23\Downloads\jellyfishfield.png" 
-
-icon = pygame.image.load('background.png')
+background = "C:\Users\W.Johnstone23\Downloads\jellyfishfield.png"  
+icon = pg.image.load(background)
 
 # player settings for the game 
 PLAYER_FRIC = -0.2
