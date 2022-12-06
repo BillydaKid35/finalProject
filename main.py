@@ -18,19 +18,22 @@ from time import *
 
 vec = pg.math.Vector2
 # game settings, defines the width and the height of the game window
-WIDTH = 500
-HEIGHT = 600
+WIDTH = 1366
+HEIGHT = 768
 FPS = 30
 
-#background image
-background = "C:\Users\W.Johnstone23\Downloads\jellyfishfield.png"  
-icon = pg.image.load(background)
+
+# #background image for window
+# pg.display.set_caption("Video Game")
+# image = pg.image.load("jellyfishfield.png")
+# pg.display.set_icon(image)
+# bg_image = pg.image.load("jellyfishfield.png")
+
 
 # player settings for the game 
 PLAYER_FRIC = -0.2
 PLAYER_GRAV = .98
 POINTS = 0
-
 
 # define colors for the game
 WHITE = (255, 255, 255)
@@ -78,7 +81,8 @@ class Player(Sprite):
         self.pos += self.vel + 0.5 * self.acc
         # self.rect.x += self.xvel
         # self.rect.y += self.yvel
-        self.rect.midbottom = self.pos    
+        self.rect.midbottom = self.pos   
+            
 
 # here's the mobs
 class Mob(Sprite):
@@ -164,6 +168,9 @@ for i in range(8):
     mobs.add(m)
 print(mobs)
 
+# upload background
+background = pg.image.load('jellyfishfield.png')
+
 ############################ Game loop #################################
 running = True
 while running:
@@ -195,7 +202,7 @@ while running:
     
     ############ Draw ################
     # draw the background screen
-    screen.fill(BLACK) #fills screen black
+    screen.blit(background, (0,0)) 
     # draw all sprites
     all_sprites.draw(screen)
     # draw text on screen...
@@ -205,5 +212,8 @@ while running:
 
     # buffer - after drawing everything, flip display
     pg.display.flip()
+
+playerimage = pg.image.load('spongebob.png') 
+mobimage = pg.image.load('jellyfish.png')
 
 pg.quit()
