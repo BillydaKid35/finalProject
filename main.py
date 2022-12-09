@@ -12,9 +12,11 @@ from secrets import choice
 from pygame.sprite import Sprite
 import random
 from random import randint, randrange
-from os import path
+import os
 from math import *
 from time import *
+from pathlib import Path
+
 
 vec = pg.math.Vector2
 # game settings, defines the width and the height of the game window
@@ -22,13 +24,9 @@ WIDTH = 1366
 HEIGHT = 768
 FPS = 30
 
-
-# #background image for window
-# pg.display.set_caption("Video Game")
-# image = pg.image.load("jellyfishfield.png")
-# pg.display.set_icon(image)
-# bg_image = pg.image.load("jellyfishfield.png")
-
+# setup asset folders here - images sounds etc.
+game_folder = os.path.dirname(__file__)
+img_folder = os.path.join(game_folder, 'images')
 
 # player settings for the game 
 PLAYER_FRIC = -0.2
@@ -57,13 +55,17 @@ def draw_text(text, size, color, x, y):
 class Player(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-        self.image = pg.Surface((50, 50))
-        self.image.fill(RED) #shows player as red
+        # self.image = pg.Surface((50, 50))
+        # self.image.fill(RED) #shows player as red
+        # this is how you use an image with a sprite....
+        self.image = pg.image.load(os.path.join(img_folder, 'spongebob.png')).convert()
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.pos = vec(WIDTH/2, HEIGHT) #drops the player at the bottom of the screen
         self.vel = vec(0,0)
         self.acc = vec(0,0)
         self.health = 100 #shows player health
+        self.inbounds = True 
     def controls(self):
         keys = pg.key.get_pressed() #when keys gets pressed, updates onto the computer
         if keys[pg.K_a]:#moves player left
@@ -88,9 +90,8 @@ class Player(Sprite):
 class Mob(Sprite):
     def __init__(self, x, y, w, h, color, typeof, health):
         Sprite.__init__(self)
-        self.image = pg.Surface((w, h)) #the surface of the game
-        self.color = color
-        self.image.fill(color) #random colors for the mobs
+        self.image = pg.image.load(os.path.join("jellyfish.png")).convert()
+        self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
@@ -147,6 +148,7 @@ pg.mixer.init()
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 pg.display.set_caption("My Game...")
 clock = pg.time.Clock()
+bg_image = pg.image.load(os.path.join(img_folder, 'jellyfishfield.png')).convert()
 
 # create a group for all sprites
 all_sprites = pg.sprite.Group()
@@ -168,8 +170,8 @@ for i in range(8):
     mobs.add(m)
 print(mobs)
 
-# upload background
-background = pg.image.load('jellyfishfield.png')
+# # upload background
+# background = pg.image.load('jellyfishfield.png')
 
 ############################ Game loop #################################
 running = True
@@ -202,7 +204,7 @@ while running:
     
     ############ Draw ################
     # draw the background screen
-    screen.blit(background, (0,0)) 
+    screen.blit(bg_image, (0,0)) 
     # draw all sprites
     all_sprites.draw(screen)
     # draw text on screen...
@@ -213,7 +215,5 @@ while running:
     # buffer - after drawing everything, flip display
     pg.display.flip()
 
-playerimage = pg.image.load('spongebob.png') 
-mobimage = pg.image.load('jellyfish.png')
 
 pg.quit()
