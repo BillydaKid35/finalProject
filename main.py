@@ -1,5 +1,5 @@
 # content from kids can code: http://kidscancode.org/blog/
-
+# source: Mr. Cozort (the Goat)
 # import libraries and modules
 # from platform import platform
 import pygame as pg
@@ -64,7 +64,7 @@ class Player(Sprite):
         self.pos = vec(WIDTH/2, HEIGHT) #drops the player at the bottom of the screen
         self.vel = vec(0,0)
         self.acc = vec(0,0)
-        self.health = 100 #shows player health
+        self.health = 100
         self.inbounds = True 
     def controls(self):
         keys = pg.key.get_pressed() #when keys gets pressed, updates onto the computer
@@ -88,60 +88,33 @@ class Player(Sprite):
 
 # here's the mobs
 class Mob(Sprite):
-    def __init__(self, x, y, w, h, color, typeof, health):
+    def __init__(self, x, y):
         Sprite.__init__(self)
-        self.image = pg.image.load(os.path.join("jellyfish.png")).convert()
+        self.image = pg.image.load(os.path.join(img_folder, 'jellyfish.png')).convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
         self.speed = 5
-        self.typeof = typeof
-        self.health = health
         self.initialized = False
-        self.healthbar = pg.Surface((self.rect.width, 5))
-        self.healthbar.fill(RED) #health bar that seems to not work ^^^^
-        self.canshoot = True
+
     def update(self):
-        # self.rect.y += self.speed
-        if self.typeof == "boss":
-            self.rect.x += self.speed*5 #no boss
-
-            if self.rect.right > WIDTH or self.rect.x < 0:
-                self.speed *= -1
-                self.rect.y += 25
-            if self.rect.bottom > HEIGHT:
-                self.rect.top = 0
-        else:
-            self.rect.x += self.speed
-            if self.rect.right > WIDTH or self.rect.x < 0:
-                self.speed *= -1
-
-class Mob(Sprite):
-    def __init__(self, x, y, w, h, color):
-        Sprite.__init__(self)
-        self.image = pg.Surface((w,h))
-        self.color = color #creates the mobs with random colors
-        self.image.fill(color)
-        self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.speedx = 5*random.choice([-1,1])
-        self.speedy = 5*random.choice([-1,1])
-        self.inbounds = True
-
-    def boundscheck(self):
-        if not self.rect.x > 0 or not self.rect.x < WIDTH: #makes mobs bounce of walls
-            self.speedx *=-1
-        if not self.rect.y > 0 or not self.rect.y < HEIGHT:
-            self.speedy *= -1
-  
-    def update(self):
-        self.boundscheck()
-        self.rect.x += self.speedx
-        self.rect.y += self.speedy
+        self.rect.y += self.speed
+        self.rect.x += self.speed
+        if self.rect.x >= WIDTH:
+            self.speed *= -1
+        if self.rect.y >= HEIGHT:
+            self.speed *= -1
+        if self.rect.x <= 0:
+            self.speed *= -1
+        if self.rect.y == 0:
+            self.speed *= -1
+    
+    # def update(self):
+    #     self.boundscheck()
+    #     self.rect.x += self.speedx
+    #     self.rect.y += self.speedy
       
-
 # init pygame and create a window
 pg.init()
 pg.mixer.init()
@@ -163,15 +136,14 @@ player = Player()
 all_sprites.add(player)
 
 
-for i in range(8):
+for i in range(10):
     # instantiate mob class repeatedly
-    m = Mob(randint(0, WIDTH), randint(0,HEIGHT), 25, 25, (randint(0,255), randint(0,255) , randint(0,255))) #width and height of mob
+    m = Mob(randint(0, WIDTH), randint(0,HEIGHT)) #width and height of mob
     all_sprites.add(m)
     mobs.add(m)
 print(mobs)
 
-# # upload background
-# background = pg.image.load('jellyfishfield.png')
+
 
 ############################ Game loop #################################
 running = True
@@ -182,8 +154,8 @@ while running:
         # check for closed window
         if event.type == pg.QUIT:
             running = False #helps keep the game running
-    
-    ############ Update ##############
+      
+############################## Update #####################################
     # update all sprites
     all_sprites.update()
     mobhits = pg.sprite.spritecollide(player, mobs, True)
@@ -209,11 +181,10 @@ while running:
     all_sprites.draw(screen)
     # draw text on screen...
     draw_text("POINTS: " + str(POINTS), 22, WHITE, WIDTH / 2, HEIGHT / 24) #draws the points onto the screen
-    if POINTS>=8:
+    if POINTS>=10:
         draw_text("YOU WIN", 100, RED, WIDTH/2, HEIGHT/4)
 
     # buffer - after drawing everything, flip display
     pg.display.flip()
-
 
 pg.quit()
