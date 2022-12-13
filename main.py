@@ -5,6 +5,7 @@
 import pygame as pg
 from pygame.sprite import Sprite
 import random
+from random import choice 
 from random import randint
 from hashlib import new
 from itertools import count
@@ -101,22 +102,16 @@ class Mob(Sprite):
         self.initialized = False
 
     def update(self):
-        if self.rect.left + x < -1:
-            self.rect.left = 1
-        elif self.rect.right + x > 1366:
-            self.rect.right = 1366
-        elif self.rect.top + y < 1:
-            self.rect.top = 1
-        elif self.rect.bottom + y > 768:
-            self.rect.bottom = 768
-        else:
-            self.rect.move_ip((x,y))
-    
-    # def update(self):
-    #     self.boundscheck()
-    #     self.rect.x += self.speedx
-    #     self.rect.y += self.speedy
-      
+        #this caused the mob to move
+        self.rect.x += self.speed*floor(randint(2,6))
+        self.rect.y += self.speed*floor(randint(2,6))
+        #this is how sprites stay in bounds
+        if self.rect.x > WIDTH or self.rect.x < 0:
+                self.speed*=-1
+        if self.rect.y > HEIGHT or self.rect.y < 0:
+                self.speed*=-1
+
+
 # init pygame and create a window
 pg.init()
 pg.mixer.init()
@@ -138,7 +133,7 @@ player = Player()
 all_sprites.add(player)
 
 
-for i in range(10):
+for i in range(8):
     # instantiate mob class repeatedly
     m = Mob(randint(0, WIDTH), randint(0,HEIGHT)) #width and height of mob
     all_sprites.add(m)
@@ -183,7 +178,7 @@ while running:
     all_sprites.draw(screen)
     # draw text on screen...
     draw_text("POINTS: " + str(POINTS), 22, WHITE, WIDTH / 2, HEIGHT / 24) #draws the points onto the screen
-    if POINTS>=10:
+    if POINTS>=8:
         draw_text("YOU WIN", 100, RED, WIDTH/2, HEIGHT/4)
 
     # buffer - after drawing everything, flip display
