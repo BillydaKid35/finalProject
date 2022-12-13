@@ -23,6 +23,8 @@ vec = pg.math.Vector2
 WIDTH = 1366
 HEIGHT = 768
 FPS = 30
+x= WIDTH
+y= HEIGHT
 
 # setup asset folders here - images sounds etc.
 game_folder = os.path.dirname(__file__)
@@ -99,16 +101,16 @@ class Mob(Sprite):
         self.initialized = False
 
     def update(self):
-        self.rect.y += self.speed
-        self.rect.x += self.speed
-        if self.rect.x >= WIDTH:
-            self.speed *= -1
-        if self.rect.y >= HEIGHT:
-            self.speed *= -1
-        if self.rect.x <= 0:
-            self.speed *= -1
-        if self.rect.y == 0:
-            self.speed *= -1
+        if self.rect.left + x < -1:
+            self.rect.left = 1
+        elif self.rect.right + x > 1366:
+            self.rect.right = 1366
+        elif self.rect.top + y < 1:
+            self.rect.top = 1
+        elif self.rect.bottom + y > 768:
+            self.rect.bottom = 768
+        else:
+            self.rect.move_ip((x,y))
     
     # def update(self):
     #     self.boundscheck()
@@ -174,7 +176,7 @@ while running:
    
     mobhits = pg.sprite.spritecollide(player, mobs, True)
     
-    ############ Draw ################
+################################# Draw ########################################
     # draw the background screen
     screen.blit(bg_image, (0,0)) 
     # draw all sprites
