@@ -21,11 +21,11 @@ from pathlib import Path
 
 vec = pg.math.Vector2
 # game settings, defines the width and the height of the game window
-WIDTH = 1366
-HEIGHT = 768
+WIDTH = 900
+HEIGHT = 506
 FPS = 30
 x= WIDTH
-y= HEIGHT
+y= HEIGHT 
 
 # setup asset folders here - images sounds etc.
 game_folder = os.path.dirname(__file__)
@@ -58,8 +58,6 @@ def draw_text(text, size, color, x, y):
 class Player(Sprite):
     def __init__(self):
         Sprite.__init__(self)
-        # self.image = pg.Surface((50, 50))
-        # self.image.fill(RED) #shows player as red
         # this is how you use an image with a sprite....
         self.image = pg.image.load(os.path.join(img_folder, 'spongebob.png')).convert()
         self.image.set_colorkey(BLACK)
@@ -75,6 +73,7 @@ class Player(Sprite):
             self.acc.x = -5 #negative 5 speed because of coordinate on graph
         if keys[pg.K_d]: #when d is pressed, player moves right
             self.acc.x = 5 #player moves positivly into the coordiant
+       
     def update(self):
         self.acc = vec(0,0)
         self.controls()
@@ -87,8 +86,8 @@ class Player(Sprite):
         # self.rect.x += self.xvel
         # self.rect.y += self.yvel
         self.rect.midbottom = self.pos   
+        
             
-
 # here's the mobs
 class Mob(Sprite):
     def __init__(self, x, y):
@@ -103,20 +102,27 @@ class Mob(Sprite):
 
     def update(self):
         #this caused the mob to move
-        self.rect.x += self.speed*floor(randint(2,6))
-        self.rect.y += self.speed*floor(randint(2,6))
+        self.rect.x += self.speed*floor(randint(1,2))
+        self.rect.y += self.speed*floor(randint(1,2))
         #this is how sprites stay in bounds
         if self.rect.x > WIDTH or self.rect.x < 0:
                 self.speed*=-1
         if self.rect.y > HEIGHT or self.rect.y < 0:
                 self.speed*=-1
+    
+    def boundscheck(self):
+        if not self.rect.x > 0 or not self.rect.x < WIDTH: #makes mobs bounce of walls
+            self.speed *=-1
+        if not self.rect.y > 0 or not self.rect.y < HEIGHT:
+            self.speed *= -1
+    
 
 
 # init pygame and create a window
 pg.init()
 pg.mixer.init()
 screen = pg.display.set_mode((WIDTH, HEIGHT))
-pg.display.set_caption("My Game...")
+pg.display.set_caption("Can Spongebob Collect All of the Jelly Fish??")
 clock = pg.time.Clock()
 bg_image = pg.image.load(os.path.join(img_folder, 'jellyfishfield.png')).convert()
 
@@ -134,6 +140,7 @@ all_sprites.add(player)
 
 
 for i in range(8):
+    #displays 8 mobs on the screen 
     # instantiate mob class repeatedly
     m = Mob(randint(0, WIDTH), randint(0,HEIGHT)) #width and height of mob
     all_sprites.add(m)
@@ -152,7 +159,7 @@ while running:
         if event.type == pg.QUIT:
             running = False #helps keep the game running
       
-############################## Update #####################################
+############################## Update ####################################
     # update all sprites
     all_sprites.update()
     mobhits = pg.sprite.spritecollide(player, mobs, True)
@@ -178,7 +185,7 @@ while running:
     all_sprites.draw(screen)
     # draw text on screen...
     draw_text("POINTS: " + str(POINTS), 22, WHITE, WIDTH / 2, HEIGHT / 24) #draws the points onto the screen
-    if POINTS>=8:
+    if POINTS>=7:
         draw_text("YOU WIN", 100, RED, WIDTH/2, HEIGHT/4)
 
     # buffer - after drawing everything, flip display
