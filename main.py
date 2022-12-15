@@ -27,11 +27,11 @@ FPS = 30
 x= WIDTH
 y= HEIGHT 
 
-# setup asset folders here - images sounds etc.
+# setup asset folders here - images for game
 game_folder = os.path.dirname(__file__)
 img_folder = os.path.join(game_folder, 'images')
 
-# player settings for the game 
+# player settings for the game
 PLAYER_FRIC = -0.2
 PLAYER_GRAV = .98
 POINTS = 0
@@ -47,7 +47,7 @@ ORANGE = (255, 162, 0)
 
 #draws the text for the points and prints them on the screen
 def draw_text(text, size, color, x, y):
-        font_name = pg.font.match_font('arial')
+        font_name = pg.font.match_font('arial') #prints the arial font on the screen
         font = pg.font.Font(font_name, size)
         text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
@@ -59,7 +59,7 @@ class Player(Sprite):
     def __init__(self):
         Sprite.__init__(self)
         # this is how you use an image with a sprite....
-        self.image = pg.image.load(os.path.join(img_folder, 'spongebob.png')).convert()
+        self.image = pg.image.load(os.path.join(img_folder, 'spongebob.png')).convert() #image for the player
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.pos = vec(WIDTH/2, HEIGHT) #drops the player at the bottom of the screen
@@ -92,20 +92,20 @@ class Player(Sprite):
 class Mob(Sprite):
     def __init__(self, x, y):
         Sprite.__init__(self)
-        self.image = pg.image.load(os.path.join(img_folder, 'jellyfish.png')).convert()
+        self.image = pg.image.load(os.path.join(img_folder, 'jellyfish.png')).convert() #displays the image for sprite
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.x = x
         self.rect.y = y
-        self.speed = 5
+        self.speed = 5 #speed of the mob
         self.initialized = False
 
     def update(self):
         #this caused the mob to move
-        self.rect.x += self.speed*floor(randint(1,2))
+        self.rect.x += self.speed*floor(randint(1,2)) #keeps mobs inbounds 
         self.rect.y += self.speed*floor(randint(1,2))
         #this is how sprites stay in bounds
-        if self.rect.x > WIDTH or self.rect.x < 0:
+        if self.rect.x > WIDTH or self.rect.x < 0: #allows mob to bounce of walls
                 self.speed*=-1
         if self.rect.y > HEIGHT or self.rect.y < 0:
                 self.speed*=-1
@@ -164,12 +164,14 @@ while running:
     all_sprites.update()
     mobhits = pg.sprite.spritecollide(player, mobs, True)
     if mobhits:
+        #prints in terminal 
         print("ive struck a mob")
         POINTS += 1
         print(POINTS)
         print("i've collided...with a mob")
         player.health -= 1
     if len(mobs) == 0:
+        #when you get all of the mobs, prints "you win" in terminal 
         print("YOU WIN")
     for event in pg.event.get():
         # checks for closed window
